@@ -10,8 +10,10 @@ class Usuarios {
 
                 if(erro)
                     reject('Erro ao inserir'+erro)
-                else
-                    resolve(retorno)
+                else{
+                    usuario = { id: retorno.insertId, ...usuario}
+                    resolve(usuario)
+                }
             })
         })
     }
@@ -24,7 +26,7 @@ class Usuarios {
                 if(erro)
                     reject("erro ao buscar"+erro)
                 else
-                    resolve(retorno)
+                    resolve(retorno[0])
             })
         })
     }
