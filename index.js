@@ -12,4 +12,16 @@ app.get('/', (req, res) => {
     )
 })
 
-//nodemon cria um web socket entre o projeto e o browser 
+//nodemon cria um web socket entre o projeto e o browser
+
+// Na aula do dia 05, refatoramos os codigos, para um melhor desenpenho e um melhor
+//padrao de codigo
+
+//Primeiro passo foi criar uma pasta './src'
+
+    //para essa pasta movemos todos os diretorios e arquivos referentes a aplicacao
+    //pastas movidas 'controllers', 'infra', 'models', 'validators'
+    //Bem como a criacao de uma pasta para armazenar as rotas separadamente
+    //e um arquivo para guardar as configuracoes de nosso servidor, o 'server.js'
+    
+    
