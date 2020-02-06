@@ -28,8 +28,7 @@ class Series{
     }
 
     atualiza(serie){
-
-        return baseQuery("UPDATE series SET ? WHERE ?", [serie, serie.id])
+        return baseQuery("UPDATE series SET ? WHERE id = ?", [serie, serie.id])
            
     }
 

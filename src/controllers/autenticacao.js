@@ -1,7 +1,8 @@
 const { validationResult } = require('express-validator')
-const UsuariosValidator = require('../validators/Usuario')
+const usuarioDao = new (require('../models/Usuarios'))()
 const jwt = require('jsonwebtoken')
 const authConfig = require('../config/auth')
+const bcrypt = require('bcryptjs')
 
 gerarToken = (params) => {
     return jwt.sign( params, authConfig.secret, {
@@ -9,60 +10,55 @@ gerarToken = (params) => {
     })
 }
 
+module.exports = {
 
-autenticacao = (app) => {
-    
-    app.post('/registrar',
-        UsuariosValidator.validacoes(),
-        (req, res) => {
-            const errors = validationResult(req)
+    async registra(req, res){
 
-            if(!errors.isEmpty()){
-                res.status(400).send(errors)
-                return
-            }
-        
-        const usuario = req.body
+        const errors = validationResult(req)
 
-        usuarioDao = app.models.Usuarios
+            if(!errors.isEmpty())
+                return res.status(400).send(errors)
+            
+        let usuario = req.body
 
-        usuarioDao.insere(usuario)
-            .then(usuario => {
+        try{
+            usuario.senha = await bcrypt.hash(usuario.senha, 10)
 
-                const token = gerarToken({ id:usuario.id })
+            const resultado = await usuarioDao.insere(usuario)
 
-                res.status(201).send({usuario, token})
+            usuario = {id:resultado.InsertId, ...usuario}
 
+            res.status(201).send({
+                usuario,
+                token:gerarToken({id:usuario.id})
             })
-            .catch(erro => res.status(500).send(erro))
+        }catch(erro){
+            res.status(500).send(erro)
+        }
 
-    })
-
-    app.post('/autenticar', async (req, res) =>{
+    },
+    async autentica(req, res){
         const {email, senha} = req.body
 
         try{
-            usuarioDao = app.models.Usuarios
-            const usuario = await usuarioDao.buscarPorEmail(email)
+
+            let usuario = await usuarioDao.buscarPorEmail(email)
+            usuario = usuario[0]
 
             if(!usuario)
                 return res.status(400).send({erro: 'Usuário não cadastrado'})
             
-            if( usuario.senha !== senha )
+            if(! await bcrypt.compare(senha, usuario.senha))
                 return res.status(400).send({erro:'Email ou senha inválido'})
 
-            const token = gerarToken({ id:usuario.id })
-
-            console.log(token)
-            res.send({usuario, token})
+            res.send({
+                usuario,
+                token: gerarToken({ id:usuario.id })
+            })
 
         }catch(erro){
             console.log(erro)
             res.status(500).send(erro)
         }
-        
-    })
-
+    }
 }
-
-module.exports = autenticacao

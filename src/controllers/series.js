@@ -34,7 +34,8 @@ module.exports = {
     async buscaPorId(req, res){
         const id = req.params.id
 
-        const serie = await serieDAO.buscaPorId(id)
+        let serie = await serieDAO.buscaPorId(id)
+        serie = serie[0]
 
         if(!serie)
              return res.status(404).send({erro: "Lista vazia"})
@@ -47,7 +48,7 @@ module.exports = {
         const serie = req.body
         serie.id = id
 
-        const retorno = await serieDAO.atualiza(serire)
+        const retorno = await serieDAO.atualiza(serie)
 
         if(!retorno.affectedRows)
             return res.status(404).send({erro:'serie não encontrada'})
@@ -59,7 +60,7 @@ module.exports = {
     async delete(req, res){
         const id = req.params.id
 
-        const retorno = await serieDAO.delete(id)
+        const retorno = await serieDAO.deletar(id)
 
         if(!retorno.affectedRows)
             return res.status(404).send({erro: 'Serie nao atualizada'})
