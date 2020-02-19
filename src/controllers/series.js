@@ -65,6 +65,6 @@ module.exports = {
         if(!retorno.affectedRows)
             return res.status(404).send({erro: 'Serie nao atualizada'})
             
-        res.status(204).send(serie) 
+        res.status(204).send();
     }
 }
