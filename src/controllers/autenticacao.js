@@ -48,9 +48,16 @@ module.exports = {
             if(!usuario)
                 return res.status(400).send({erro: 'Usuário não cadastrado'})
             
+            console.log(senha)
+            console.log(usuario.senha)
+
             if(! await bcrypt.compare(senha, usuario.senha))
                 return res.status(400).send({erro:'Email ou senha inválido'})
 
+            console.log('asdasdas')
+
+            delete usuario.senha;
+            
             res.send({
                 usuario,
                 token: gerarToken({ id:usuario.id })
