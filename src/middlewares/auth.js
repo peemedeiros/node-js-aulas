@@ -15,6 +15,7 @@ module.exports = ( req, res, next ) => {
     const [ bearer, token] = parts
 
     jwt.verify(token, authConfig.secret, (erro, user) => {
+        
         if(erro) return res.status(401).send( {erro: 'token inválido'} )
 
         req.userId = user.id;
